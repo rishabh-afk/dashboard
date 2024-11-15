@@ -1,0 +1,51 @@
+import React, { FC } from "react";
+import { formatDate } from "../../data/generalFunctions";
+
+interface DateProps {
+  field: {
+    name: string;
+    label: string;
+    value?: string;
+    required?: boolean;
+    placeholder?: string;
+    isDisabled?: boolean;
+    defaultValue?: string; // ISO format (YYYY-MM-DD) is generally used for dates
+    minDate?: string; // Minimum date in YYYY-MM-DD format
+    maxDate?: string; // Maximum date in YYYY-MM-DD format
+  };
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}
+
+const Date: FC<DateProps> = ({ field, handleInputChange, className }) => {
+  const maxDate =
+    field.maxDate && !String(field.maxDate)
+      ? field.maxDate
+      : formatDate(new global.Date().toISOString().split("T")[0]);
+  return (
+    <div className="relative">
+      <label
+        htmlFor={field.name}
+        className="block font-medium text-gray-700 mb-2"
+      >
+        {field.label}
+        {field.required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        type="date"
+        max={maxDate}
+        id={field.name}
+        name={field.name}
+        min={field.minDate}
+        required={field.required}
+        disabled={field.isDisabled}
+        onChange={handleInputChange}
+        placeholder={field.placeholder}
+        value={field?.value ? formatDate(field.value) : ""}
+        className={`border border-gray-300 text-black rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${className}`}
+      />
+    </div>
+  );
+};
+
+export default Date;
