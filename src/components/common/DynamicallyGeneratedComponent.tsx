@@ -7,9 +7,11 @@ type ComponentType = "String" | "Number" | "List";
 const DynamicallyGeneratedComponent = ({
   formData,
   setFormData,
+  hideInstructions,
 }: {
   formData: any;
   setFormData: any;
+  hideInstructions?: boolean;
 }) => {
   let [currentKey, setCurrentKey] = useState<string>("");
   const [currentValue, setCurrentValue] = useState<string>("");
@@ -24,7 +26,7 @@ const DynamicallyGeneratedComponent = ({
     if (selectedType === "Number" && isNaN(Number(currentValue)))
       return toast.error("Please enter a valid number.");
 
-    if (formData?.additionalFeatures?.hasOwnProperty(currentKey))
+    if (formData?.specifications?.hasOwnProperty(currentKey))
       return toast.error("Key already exists. Please enter a unique key.");
 
     let value: string | number | string[] = currentValue;
@@ -34,7 +36,7 @@ const DynamicallyGeneratedComponent = ({
     currentKey = currentKey.toLowerCase().split(" ").join("_");
     setFormData((prev: any) => ({
       ...prev,
-      additionalFeatures: { ...prev?.additionalFeatures, [currentKey]: value },
+      specifications: { ...prev?.specifications, [currentKey]: value },
     }));
     resetInputFields();
   };
@@ -58,35 +60,40 @@ const DynamicallyGeneratedComponent = ({
 
   return (
     <div className="rounded-lg w-full">
-      <div className="mb-4">
-        <h2 className="text-2xl mb-2 font-semibold">Instructions</h2>
-        <ul className="list-inside list-disc text-sm">
-          <li>Choose a type from the tabs below (String, Number, or List).</li>
-          <li>Enter a unique key and its value.</li>
-          <li>
-            For List type, you can add multiple values by clicking the "+"
-            button after each item.
-          </li>
-          <li>When you're ready, click "Add Field" to save your entry.</li>
-        </ul>
-      </div>
-
-      <div className="mb-4 flex space-x-2">
-        {["String", "Number", "List"].map((type) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => setSelectedType(type as ComponentType)}
-            className={`px-4 py-1 rounded-lg ${
-              selectedType === type
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-gray-700"
-            }`}
-          >
-            {type}
-          </button>
-        ))}
-      </div>
+      {!hideInstructions && (
+        <div className="mb-4">
+          <h2 className="text-2xl mb-2 font-semibold">Instructions</h2>
+          <ul className="list-inside list-disc text-sm">
+            <li>
+              Choose a type from the tabs below (String, Number, or List).
+            </li>
+            <li>Enter a unique key and its value.</li>
+            <li>
+              For List type, you can add multiple values by clicking the "+"
+              button after each item.
+            </li>
+            <li>When you're ready, click "Add Field" to save your entry.</li>
+          </ul>
+        </div>
+      )}
+      {!hideInstructions && (
+        <div className="mb-4 flex space-x-2">
+          {["String", "Number", "List"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setSelectedType(type as ComponentType)}
+              className={`px-4 py-1 rounded-lg ${
+                selectedType === type
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-700"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      )}
 
       {selectedType && (
         <div className="mb-2 grid grid-cols-4 gap-5">
@@ -144,10 +151,11 @@ const DynamicallyGeneratedComponent = ({
           </button>
         </div>
       )}
-      {formData?.additionalFeatures && (
+      {formData?.specifications && (
         <EditableObjectComponent
           setFormData={setFormData}
-          keyValuePairs={formData?.additionalFeatures}
+          hideInstructions={hideInstructions}
+          keyValuePairs={formData?.specifications}
         />
       )}
     </div>

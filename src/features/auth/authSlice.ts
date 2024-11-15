@@ -1,3 +1,4 @@
+import { getUrl } from "../../data/generalFunctions";
 import { Fetch, Post, Put } from "../../utils/apiUtils";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
@@ -80,9 +81,10 @@ export const loginUser = createAsyncThunk<
     if (success) {
       const accessToken = data?.accessToken;
       const refreshToken = data?.refreshToken;
+      const url = getUrl(data?.user?.allowedTabs) ?? "/not-allowed";
+      localStorage.setItem("previousPath", url);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("previousPath", "/dashboard");
       return data?.user;
     }
   } catch (error: any) {
@@ -100,14 +102,15 @@ export const resetPassword = createAsyncThunk<
     const { data, success }: any = await Post(
       "vendors/create-password",
       credentials,
-      5000,
+      5000
     );
     if (success) {
       const accessToken = data?.accessToken;
       const refreshToken = data?.refreshToken;
+      const url = getUrl(data?.user?.allowedTabs) ?? "/not-allowed";
+      localStorage.setItem("previousPath", url);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("previousPath", "/dashboard");
       return data?.user;
     }
   } catch (error: any) {
@@ -144,7 +147,7 @@ export const updateUserPermission = createAsyncThunk<
       const errorMessage = handleError(error);
       return rejectWithValue(errorMessage);
     }
-  },
+  }
 );
 
 export const authSlice = createSlice({
@@ -177,7 +180,7 @@ export const authSlice = createSlice({
           state.isLoading = false;
           state.error = action.payload ?? "Login failed";
           state.user = initialState.user;
-        },
+        }
       )
       .addCase(resetPassword.pending, (state) => {
         state.isLoading = true;
@@ -193,7 +196,7 @@ export const authSlice = createSlice({
           state.isLoading = false;
           state.error = action.payload ?? "Login failed";
           state.user = initialState.user;
-        },
+        }
       )
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true;
@@ -204,7 +207,7 @@ export const authSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.isLoading = false;
           state.user = action.payload?.data ?? null;
-        },
+        }
       )
       .addCase(
         getCurrentUser.rejected,
@@ -212,7 +215,7 @@ export const authSlice = createSlice({
           state.isLoading = false;
           state.error = action.payload ?? "Login failed";
           state.user = initialState.user;
-        },
+        }
       )
       .addCase(updateUserPermission.pending, (state) => {
         state.error = null;
@@ -222,7 +225,7 @@ export const authSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.isLoading = false;
           state.user = action.payload?.data ?? null;
-        },
+        }
       )
       .addCase(
         updateUserPermission.rejected,
@@ -230,7 +233,7 @@ export const authSlice = createSlice({
           state.isLoading = false;
           state.error = action.payload ?? "Login failed";
           state.user = initialState.user;
-        },
+        }
       );
   },
 });

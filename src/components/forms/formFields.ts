@@ -1,3 +1,4 @@
+import { countries } from "../../data/data";
 import { includes } from "../../utils/polyfills";
 export interface FormField {
   name: string;
@@ -92,6 +93,17 @@ export const formFields: FormField[] = [
       { value: "Female", label: "female" },
       { value: "Other", label: "other" },
     ],
+  },
+  {
+    name: "countryCode",
+    label: "Country",
+    type: "select",
+    required: true,
+    placeholder: "Select Country",
+    options: countries.map((country: any) => ({
+      value: country.name,
+      label: country.code.slice(1),
+    })),
   },
   {
     name: "role",

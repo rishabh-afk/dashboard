@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 
 interface ToggleButtonProps {
   setState: any;
+  keyUpdate?: any;
   field: {
     name: string;
     label: string;
@@ -10,12 +11,22 @@ interface ToggleButtonProps {
   };
 }
 
-const ToggleButton: FC<ToggleButtonProps> = ({ field, setState }) => {
+const ToggleButton: FC<ToggleButtonProps> = ({
+  field,
+  setState,
+  keyUpdate,
+}) => {
   const [active, setActive] = useState<boolean>(field.value ?? false);
 
   const handleClick = () => {
-    setActive(!active);
-    setState((prev: any) => ({ ...prev, [field.name]: !active }));
+    const newActiveState = !active;
+    setActive(newActiveState);
+    if (keyUpdate) setState(newActiveState);
+    else if (field?.name)
+      setState((prev: Record<string, boolean>) => ({
+        ...prev,
+        [field.name]: newActiveState,
+      }));
   };
 
   return (

@@ -18,10 +18,8 @@ interface DateProps {
 }
 
 const Date: FC<DateProps> = ({ field, handleInputChange, className }) => {
-  const maxDate =
-    field.maxDate && !String(field.maxDate)
-      ? field.maxDate
-      : formatDate(new global.Date().toISOString().split("T")[0]);
+  const maxDate = field.maxDate && !String(field.maxDate) ? field.maxDate : "";
+  console.log(field.minDate);
   return (
     <div className="relative">
       <label

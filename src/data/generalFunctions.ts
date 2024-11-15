@@ -1,4 +1,5 @@
 import { assign, includes } from "../utils/polyfills";
+import { tabs } from "./tabs";
 
 interface Permission {
   name: string;
@@ -6,7 +7,7 @@ interface Permission {
 }
 
 export const convertPermissions = (
-  permissions: Record<string, boolean>,
+  permissions: Record<string, boolean>
 ): Permission[] => {
   const reformattedPermissions: Record<
     string,
@@ -29,7 +30,7 @@ export const convertPermissions = (
       reformattedPermissions[name].crudRoles.push(role);
   }
   return Object.values(reformattedPermissions).filter(
-    (permission) => permission.crudRoles.length > 0,
+    (permission) => permission.crudRoles.length > 0
   );
 };
 export const debounce = (func: Function, delay: number) => {
@@ -45,10 +46,10 @@ export const debounce = (func: Function, delay: number) => {
 export const isButtonAllowedToShow = (
   type: string,
   currentPage: string,
-  allowedTabs: any,
+  allowedTabs: any
 ) => {
   const currentTab: any = allowedTabs.find(
-    (tab: any) => tab?.name === currentPage,
+    (tab: any) => tab?.name === currentPage
   );
   return currentTab ? includes(currentTab.crudRoles, type) : false;
 };
@@ -82,3 +83,21 @@ export function formatDate(inputDate: any) {
   // Return in YYYY-MM-DD format
   return `${year}-${month}-${day}`;
 }
+
+export const getSelectFormattedData = (data: any) => {
+  const response = data.map((option: any) => ({
+    value: option?.name,
+    label: option?._id,
+  }));
+  return response;
+};
+
+export const getUrl = (data: any) => {
+  if (data.length === 0) return "/not-allowed";
+  for (const tab of tabs) {
+    for (const item of data) {
+      if (tab.name === item.name) return tab.href;
+    }
+  }
+  return "/not-allowed";
+};

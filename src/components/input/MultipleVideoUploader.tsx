@@ -47,7 +47,7 @@ const MultipleVideoUpload: React.FC<MultipleVideoUploadProps> = ({
 
   const handleRemoveVideo = (url: string) => {
     setSelectedVideos((prevVideos) =>
-      prevVideos.filter((video) => video.url !== url),
+      prevVideos.filter((video) => video.url !== url)
     );
     const obj = {
       [fieldname]: selectedVideos.filter((video: any) => video.url !== url),

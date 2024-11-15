@@ -1,6 +1,9 @@
+import { format } from "date-fns";
+import { Fetch } from "../../utils/apiUtils";
+import { MdInventory2 } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { FaArrowUp, FaArrowDown, FaEdit, FaTrash } from "react-icons/fa";
-import { format } from "date-fns"; // To handle date formatting
 
 // Column type definition with added flexibility
 interface Column {
@@ -13,20 +16,27 @@ interface Column {
 }
 
 interface TableProps {
+  formType?: string;
   columns: Column[]; // Array of column definitions
   data: any[]; // Array of data rows
   onEdit: (row: any) => void; // Edit handler
   onDelete: (row: any) => void; // Delete handler
+  isEdit?: boolean;
+  isDelete?: boolean;
   fetchFilteredData?: any;
 }
 
 export default function CustomTable({
   data,
   onEdit,
+  isEdit,
   columns,
   onDelete,
+  isDelete,
+  formType,
   fetchFilteredData,
 }: TableProps) {
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [showPopup, setShowPopup] = useState<null | number>(null);
   const [sortField, setSortField] = useState<string | null>(null);
@@ -78,6 +88,16 @@ export default function CustomTable({
     };
   }, []);
 
+  const manageInventory = async (id: string) => {
+    const response: any = await Fetch(
+      "inventory/get-by-product?productId=" + id
+    );
+    if (response?.success) {
+      const state = response?.data;
+      return navigate("/manage-inventory/" + id, { state });
+    }
+  };
+
   return (
     <div className="overflow-x-auto p-4 pt-0 pb-16">
       <table className="min-w-full text-left overflow-x-auto border-y-collapse">
@@ -110,9 +130,11 @@ export default function CustomTable({
                 </span>
               </th>
             ))}
-            <th className="border-y border-gray-300 p-3 font-medium text-lg">
-              Actions
-            </th>
+            {(isEdit || isDelete) && (
+              <th className="border-y border-gray-300 p-3 font-medium text-lg">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -132,40 +154,62 @@ export default function CustomTable({
                     className="border-y border-gray-300 p-3 whitespace-nowrap"
                   >
                     {column.isDate && row[column.key]
-                      ? // If column is marked as date, format it
-                        format(
+                      ? format(
                           new Date(row[column.key]),
-                          column.dateFormat || "dd/MM/yyyy",
+                          column.dateFormat || "dd/MM/yyyy"
                         )
-                      : row[column.key]}
+                      : (row[column.key] === true || row[column.key] === false
+                          ? row[column.key].toString()
+                          : row[column.key] && row[column.key].length > 50
+                          ? row[column.key].slice(0, 50) + "..."
+                          : row[column.key]) ?? "-"}
                   </td>
                 ))}
                 <td className="border-y relative border-gray-300 p-3 text-left">
-                  <button
-                    onClick={() =>
-                      setShowPopup(showPopup === index ? null : index)
-                    }
-                    className="border border-gray-300 px-2 py-0.5 rounded-md"
-                  >
-                    More
-                  </button>
+                  {(isEdit || isDelete) && (
+                    <button
+                      onClick={() =>
+                        setShowPopup(showPopup === index ? null : index)
+                      }
+                      className="border border-gray-300 px-2 py-0.5 rounded-md"
+                    >
+                      More
+                    </button>
+                  )}
                   {showPopup === index && (
                     <div
                       ref={dropdownRef}
-                      className="absolute mt-1 -left-7 bg-white border border-gray-300 shadow-lg rounded-md z-10"
+                      className={`absolute mt-1 ${
+                        formType === "Products" ? "right-12" : "-left-7"
+                      } bg-white border border-gray-300 shadow-lg rounded-md z-10`}
                     >
-                      <button
-                        className="block px-4 w-full text-left py-1 text-sm hover:bg-gray-200"
-                        onClick={() => onEdit(row?._id)}
-                      >
-                        <FaEdit className="inline-block mr-1" /> Edit
-                      </button>
-                      <button
-                        className="block px-4 w-full text-left py-1 text-sm hover:bg-gray-200"
-                        onClick={() => onDelete(row?._id)}
-                      >
-                        <FaTrash className="inline-block mr-1" /> Delete
-                      </button>
+                      {isEdit && (
+                        <button
+                          className="block px-4 w-full text-left py-1 text-sm hover:bg-gray-200"
+                          onClick={() => onEdit(row?._id)}
+                        >
+                          <FaEdit className="inline-block text-blue-500 mr-1" />{" "}
+                          Edit
+                        </button>
+                      )}
+                      {isDelete && (
+                        <button
+                          className="block px-4 w-full text-left py-1 text-sm hover:bg-gray-200"
+                          onClick={() => onDelete(row?._id)}
+                        >
+                          <FaTrash className="inline-block text-red-500 mr-1" />{" "}
+                          Delete
+                        </button>
+                      )}
+                      {formType === "Products" && (
+                        <button
+                          className="block px-4 w-full text-left whitespace-nowrap py-1 text-sm hover:bg-gray-200"
+                          onClick={() => manageInventory(row?._id)}
+                        >
+                          <MdInventory2 className="inline-block text-green-500 mr-1" />{" "}
+                          Manage Inventory
+                        </button>
+                      )}
                     </div>
                   )}
                 </td>

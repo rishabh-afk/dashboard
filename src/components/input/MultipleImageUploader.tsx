@@ -9,6 +9,7 @@ interface ImageData {
 
 interface MultipleImageUploadProps {
   field: {
+    value: any;
     name: string;
     label: string;
     required?: boolean;
@@ -28,7 +29,27 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
   uploadBoxMessage = `Click to upload images (max ${maxImages})`,
 }) => {
   const fieldname = field.name;
-  const [selectedImages, setSelectedImages] = useState<ImageData[]>([]);
+  const upcomingImages =
+    field?.value && field?.value.length > 0
+      ? field?.value.map((data: any) => ({
+          url: data,
+          file: null,
+        }))
+      : [];
+
+  const upcomingFiles =
+    field?.value && field?.value.length > 0
+      ? field?.value.map((data: any) => ({
+          url: data,
+        }))
+      : [];
+
+  const [selectedImages, setSelectedImages] = useState<ImageData[]>(
+    upcomingImages ?? []
+  );
+  const [selectedFiles, setSelectedFiles] = useState<any[]>(
+    upcomingFiles ?? []
+  );
   // const [uploading, setUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -41,34 +62,34 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
         url: URL.createObjectURL(file),
         file,
       }));
+      const newFilesArray = newFiles.map((file) => file);
       setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-      const obj = fieldname
-        ? { [fieldname]: [...selectedImages, ...newImages] }
-        : { imageUrl: newImages };
-      setFormData((prev: any) => ({ ...prev, ...obj }));
+      setSelectedFiles((prevImages) => [...prevImages, ...newFilesArray]);
+      const obj: any = fieldname
+        ? { [fieldname]: [...selectedFiles, ...newFilesArray] }
+        : { imageUrl: newFilesArray };
+      const updatedArray = obj.images.map((item: any) =>
+        item.url ? item.url : item
+      );
+      setFormData((prev: any) => ({ ...prev, images: updatedArray }));
     }
   };
 
   const handleRemoveImage = (url: string) => {
     setSelectedImages((prevImages) =>
-      prevImages.filter((image) => image.url !== url),
+      prevImages.filter((image) => image.url !== url)
     );
-    const obj = {
+    setSelectedFiles((prevImages) =>
+      prevImages.filter((image) => image.url !== url)
+    );
+    const obj: any = {
       [fieldname]: selectedImages.filter((image: any) => image.url !== url),
     };
-    setFormData((prev: any) => ({ ...prev, ...obj }));
+    const updatedArray = obj.images.map((item: any) =>
+      item.url ? item.url : item
+    );
+    setFormData((prev: any) => ({ ...prev, [fieldname]: updatedArray }));
   };
-
-  // const handleUpload = () => {
-  //   if (selectedImages.length === 0) return;
-
-  //   setUploading(true);
-  //   setTimeout(() => {
-  //     alert("Images uploaded successfully!");
-  //     setUploading(false);
-  //     setSelectedImages([]);
-  //   }, 2000);
-  // };
 
   return (
     <div className="flex flex-col items-start space-y-4">

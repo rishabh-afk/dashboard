@@ -21,7 +21,7 @@ const SingleImageUploader: FC<SingleImageUploaderProps> = ({
   const fieldname = field?.name;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(
-    field.value ?? null,
+    field.value ?? null
   );
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,13 +33,13 @@ const SingleImageUploader: FC<SingleImageUploaderProps> = ({
 
       if (file.size > maxSizeInBytes) {
         return toast.warn(
-          "File size exceeds 1 MB. Please select a smaller file.",
+          "File size exceeds 1 MB. Please select a smaller file."
         );
       }
 
       if (!validTypes.includes(file.type)) {
         return toast.warn(
-          "Invalid file type. Please select a PNG, JPG, or JPEG image.",
+          "Invalid file type. Please select a PNG, JPG, or JPEG image."
         );
       }
 

@@ -34,23 +34,31 @@ const Select: FC<SelectProps> = ({ field, handleInputChange, className }) => {
       <select
         id={field.name}
         name={field.name}
-        value={field?.value}
         required={field.required}
+        value={field?.value ?? ""}
         disabled={field.isDisabled}
         multiple={field.isMultiple}
         onChange={handleInputChange}
-        className={`border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${className}`}
+        className={`border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${className} ${
+          field?.isMultiple && "h-36"
+        }`}
       >
-        {field.placeholder && (
+        {field.placeholder && field.options && field.options.length > 0 && (
           <option value="" disabled>
             {field.placeholder}
           </option>
         )}
-        {field.options?.map((option) => (
-          <option key={option.value} value={option.label}>
-            {option.value}
+        {field.options && field.options.length > 0 ? (
+          field.options?.map((option) => (
+            <option key={option.value} value={option.label}>
+              {option.value}
+            </option>
+          ))
+        ) : (
+          <option value="" disabled selected>
+            No Data Available
           </option>
-        ))}
+        )}
       </select>
     </div>
   );

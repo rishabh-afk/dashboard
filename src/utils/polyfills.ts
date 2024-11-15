@@ -2,7 +2,7 @@
 export function includes<T>(
   array: T[],
   value: T,
-  fromIndex: number = 0,
+  fromIndex: number = 0
 ): boolean {
   if (array == null) {
     throw new TypeError('"this" is null or not defined');
@@ -44,7 +44,7 @@ export function assign<T extends Record<string, any>>(
 export function from<T>(
   arrayLike: any,
   mapFn?: (v: any, k: number) => T,
-  thisArg?: any,
+  thisArg?: any
 ): T[] {
   const arr: T[] = [];
   for (let i = 0; i < arrayLike.length; i++) {

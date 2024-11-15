@@ -1,11 +1,12 @@
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const Back = () => {
+const Back = ({ link }: { link?: string }) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-1);
+    const url: any = link ?? -1;
+    navigate(url);
   };
   return (
     <p className="inline-flex gap-2 items-center pl-4 pt-4">

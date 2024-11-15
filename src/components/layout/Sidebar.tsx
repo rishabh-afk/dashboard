@@ -13,7 +13,7 @@ const Sidebar = () => {
       return allowedRolesPerAdmin?.some((roleDb: any) => {
         return tab.name === roleDb.name && roleDb.crudRoles.length > 0;
       });
-    },
+    }
   );
   return (
     <div className="w-1/5 max-w-[18%] flex flex-col justify-start items-start bg-primary text-white">

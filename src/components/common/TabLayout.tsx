@@ -20,7 +20,7 @@ const TabLayout = ({ screen }: { screen: string }) => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Back />
+      <Back link={`/${screen}`} />
       <div className="p-4 bg-white shadow-lg rounded-2xl m-4 transition-all duration-300">
         <div className="flex border-t border-primary/20 w-fit">
           {tabs.map((tab) => (

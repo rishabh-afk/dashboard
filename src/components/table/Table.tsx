@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { assign } from "../../utils/polyfills";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import DeleteModal from "../modals/DeleteModal";
 import { endpoints } from "../../data/endpoints";
 import React, { useEffect, useState } from "react";
 import { Delete, Fetch } from "../../utils/apiUtils";
@@ -18,23 +19,32 @@ interface PaginationRequest {
 }
 
 const Table = ({
+  isEdit,
   classes,
   columns,
   formType,
+  isCached,
+  isDelete,
   responseData,
   filterOptions,
   paginationData,
   SearchPlaceholder = "Search By...",
 }: {
+  isEdit?: any;
   classes?: any;
   columns?: any;
+  isDelete?: any;
   formType?: string;
+  isCached?: boolean;
   responseData?: any;
   filterOptions?: any;
   paginationData?: any;
   SearchPlaceholder?: string;
 }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [loading, setloading] = useState(false);
+  const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [paginate, setPaginate] = useState<PaginationRequest>({
     totalPages: paginationData?.totalPages ?? 0,
     totalItems: paginationData?.totalItems ?? 0,
@@ -50,6 +60,7 @@ const Table = ({
     direction: null,
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteModalId, setDeleteModalId] = useState("");
   const [selectedField, setSelectedField] = useState("");
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
@@ -93,7 +104,7 @@ const Table = ({
     if (formType && id) {
       const fetchUrl = `${endpoints[formType].read}${id}`;
       const redirectionUrl = `${endpoints[formType].redirectUrl}${id}`;
-      const resp: any = await Fetch(fetchUrl);
+      const resp: any = await Fetch(fetchUrl, {}, 5000, true, false);
       if (resp?.success) {
         const state = resp?.data;
         return navigate(redirectionUrl, { state });
@@ -101,19 +112,37 @@ const Table = ({
     }
   };
 
+  useEffect(() => {
+    if (isCached) fetchFilteredData();
+    // eslint-disable-next-line
+  }, [pathname, isCached]);
+
   const handleDelete = async (id: string) => {
-    if (formType && id) {
+    if (!deleteConfirmationModal && !deleteModalId) {
+      setDeleteModalId(id);
+      return setDeleteConfirmationModal(true);
+    }
+    if (formType && id && deleteConfirmationModal && deleteModalId) {
+      setloading(true);
       const fetchUrl = endpoints[formType].fetchAll;
       const deleteUrl = `${endpoints[formType].delete}${id}`;
       const response: any = await Delete(deleteUrl);
       if (response?.success) {
-        const resp: any = await Fetch(fetchUrl);
+        handleClose();
+        setloading(false);
+        const resp: any = await Fetch(fetchUrl, {}, 5000, true, false);
         if (resp?.success) {
           setFilteredData(resp?.data?.result);
           setPaginate(resp?.data?.pagination);
         }
       }
+      setloading(false);
     }
+  };
+
+  const handleClose = () => {
+    setDeleteModalId("");
+    setDeleteConfirmationModal(false);
   };
 
   const fetchFilteredData = async (filterParams?: any) => {
@@ -184,7 +213,7 @@ const Table = ({
     setFilteredData(responseData);
     if (formType) {
       const fetchUrl = endpoints[formType].fetchAll;
-      const resp: any = await Fetch(fetchUrl, params);
+      const resp: any = await Fetch(fetchUrl, params, 5000, true, false);
       if (resp?.success) {
         setFilteredData(resp?.data?.result);
         setPaginate(resp?.data?.pagination);
@@ -194,6 +223,13 @@ const Table = ({
 
   return (
     <div className={`${classes ? classes : "pt-20"}`}>
+      <DeleteModal
+        loading={loading}
+        id={deleteModalId}
+        handleClose={handleClose}
+        handleDelete={handleDelete}
+        isVisible={deleteConfirmationModal}
+      />
       <div className="grid grid-cols-2 gap-5">
         <SearchFilter
           options={filterOptions}
@@ -213,9 +249,12 @@ const Table = ({
         />
       </div>
       <CustomTable
+        isEdit={isEdit}
         columns={columns}
+        isDelete={isDelete}
         data={filteredData}
         onEdit={handleEdit}
+        formType={formType}
         onDelete={handleDelete}
         fetchFilteredData={fetchFilteredData}
       />

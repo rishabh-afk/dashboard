@@ -8,9 +8,11 @@ interface DataObject {
 const EditableObjectComponent = ({
   setFormData,
   keyValuePairs,
+  hideInstructions,
 }: {
   setFormData: any;
   keyValuePairs: any;
+  hideInstructions?: boolean;
 }) => {
   let [data, setData] = useState<DataObject>(keyValuePairs ?? {});
 
@@ -21,7 +23,7 @@ const EditableObjectComponent = ({
   const handleInputChange = (key: string, value: string | number) => {
     setFormData((prev: any) => ({
       ...prev,
-      additionalFeatures: { ...prev?.additionalFeatures, [key]: value },
+      specifications: { ...prev?.specifications, [key]: value },
     }));
   };
 
@@ -31,7 +33,7 @@ const EditableObjectComponent = ({
       updatedList[index] = newValue;
       setFormData((prev: any) => ({
         ...prev,
-        additionalFeatures: { ...prev?.additionalFeatures, [key]: updatedList },
+        specifications: { ...prev?.specifications, [key]: updatedList },
       }));
     }
   };
@@ -40,8 +42,8 @@ const EditableObjectComponent = ({
     if (Array.isArray(data[key])) {
       setFormData((prev: any) => ({
         ...prev,
-        additionalFeatures: {
-          ...prev?.additionalFeatures,
+        specifications: {
+          ...prev?.specifications,
           [key]: [...(data[key] as string[]), ""],
         },
       }));
@@ -54,11 +56,10 @@ const EditableObjectComponent = ({
       setFormData((prev: any) => {
         const newFormData = {
           ...prev,
-          additionalFeatures: { ...prev?.additionalFeatures },
+          specifications: { ...prev?.specifications },
         };
-        if (updatedList.length === 0)
-          delete newFormData.additionalFeatures[key];
-        else newFormData.additionalFeatures[key] = updatedList;
+        if (updatedList.length === 0) delete newFormData.specifications[key];
+        else newFormData.specifications[key] = updatedList;
         return newFormData;
       });
     }
@@ -68,10 +69,10 @@ const EditableObjectComponent = ({
     setFormData((prev: any) => {
       const newFormData = {
         ...prev,
-        additionalFeatures: { ...prev?.additionalFeatures },
+        specifications: { ...prev?.specifications },
       };
-      if (newFormData.additionalFeatures[key])
-        delete newFormData.additionalFeatures[key];
+      if (newFormData.specifications[key])
+        delete newFormData.specifications[key];
       return newFormData;
     });
   };
@@ -83,7 +84,13 @@ const EditableObjectComponent = ({
           key={key}
           className={`flex flex-col ${Array.isArray(value) && "col-span-3"}`}
         >
-          <label className="font-semibold mb-1">{key}</label>
+          <label
+            className={`font-semibold capitalize mb-1 ${
+              hideInstructions && "text-lg"
+            }`}
+          >
+            {key.split(/(?=[A-Z])|_/).join(" ")}
+          </label>
 
           {/* Check the type of value and render accordingly */}
           {typeof value === "string" && (
@@ -94,12 +101,14 @@ const EditableObjectComponent = ({
                 onChange={(e) => handleInputChange(key, e.target.value)}
                 className="border p-2 rounded-lg w-full"
               />
-              <span
-                onClick={() => removeItem(key)}
-                className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
-              >
-                <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
-              </span>
+              {!hideInstructions && (
+                <span
+                  onClick={() => removeItem(key)}
+                  className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
+                >
+                  <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
+                </span>
+              )}
             </div>
           )}
 
@@ -111,12 +120,14 @@ const EditableObjectComponent = ({
                 onChange={(e) => handleInputChange(key, Number(e.target.value))}
                 className="border p-2 rounded-lg w-full"
               />
-              <span
-                onClick={() => removeItem(key)}
-                className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
-              >
-                <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
-              </span>
+              {!hideInstructions && (
+                <span
+                  onClick={() => removeItem(key)}
+                  className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
+                >
+                  <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
+                </span>
+              )}
             </div>
           )}
 
@@ -133,12 +144,14 @@ const EditableObjectComponent = ({
                       }
                       className="border p-2 rounded-lg w-full"
                     />
-                    <span
-                      onClick={() => removeListItem(key, index)}
-                      className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
-                    >
-                      <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
-                    </span>
+                    {!hideInstructions && (
+                      <span
+                        onClick={() => removeListItem(key, index)}
+                        className="text-red-500 font-bold cursor-pointer hover:text-red-600 transition-all duration-200"
+                      >
+                        <MdDelete className="text-2xl hover:scale-125 transition-all duration-200 ease-linear" />
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>

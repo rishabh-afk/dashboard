@@ -25,7 +25,7 @@ const Checkbox: FC<CheckboxProps> = ({
   className,
 }) => {
   const [selectedValues, setSelectedValues] = React.useState<string[]>(
-    field.defaultValues || [],
+    field.defaultValues || []
   );
 
   const handleCheckboxChange = (value: string) => {

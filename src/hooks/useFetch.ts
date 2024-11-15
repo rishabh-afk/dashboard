@@ -12,6 +12,7 @@ function useFetch(url: string, options?: FetchOptions) {
     data: cache[url] || null, // Load data from cache if available
     loading: !cache[url], // Skip loading if data is cached
     error: null,
+    isCached: !!cache[url], // Indicate if the response is from the cache
   });
 
   useEffect(() => {
@@ -22,7 +23,7 @@ function useFetch(url: string, options?: FetchOptions) {
     const timeoutId = setTimeout(() => controller.abort(), 10000); // Abort request after 10 seconds
 
     const fetchData = async () => {
-      setState({ data: null, loading: true, error: null });
+      setState({ data: null, loading: true, error: null, isCached: false });
 
       try {
         const response = await fetch(`${BASEURL}${url}`, {
@@ -39,7 +40,7 @@ function useFetch(url: string, options?: FetchOptions) {
           const errorDetails = await response.json();
           throw new Error(
             errorDetails.message ||
-              `Error ${response.status}: ${response.statusText}`,
+              `Error ${response.status}: ${response.statusText}`
           );
         }
 
@@ -47,7 +48,7 @@ function useFetch(url: string, options?: FetchOptions) {
 
         if (isMounted) {
           cache[url] = data; // Cache the response
-          setState({ data, loading: false, error: null });
+          setState({ data, loading: false, error: null, isCached: false });
         }
       } catch (error: any) {
         if (isMounted) {
@@ -56,12 +57,14 @@ function useFetch(url: string, options?: FetchOptions) {
               data: null,
               loading: false,
               error: "Request timed out after 10 seconds",
+              isCached: false,
             });
           } else {
             setState({
               data: null,
               loading: false,
               error: error.message || "An unknown error occurred",
+              isCached: false,
             });
           }
         }

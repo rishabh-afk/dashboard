@@ -196,7 +196,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             )}
 
             {field.type === "file" && field.multiple && !field?.isVideo && (
-              <MultipleImageUpload field={field} setFormData={setFormData} />
+              <MultipleImageUpload
+                setFormData={setFormData}
+                field={{ ...field, value: formData[field?.name] }}
+              />
             )}
 
             {field.type === "file" && !field.multiple && field?.isVideo && (
@@ -214,7 +217,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             )}
           </div>
         ))}
-      {dynamicallyAllowed && addMoreFields && (
+      {dynamicallyAllowed && (addMoreFields || formData?.specifications) && (
         <div className="col-span-3">
           <DynamicallyGeneratedComponent
             formData={formData}
@@ -222,7 +225,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           />
         </div>
       )}
-      {dynamicallyAllowed && !addMoreFields && (
+      {dynamicallyAllowed && !addMoreFields && !formData?.specifications && (
         <span
           className="text-xl col-span-2 cursor-pointer hover:underline hover:underline-offset-2"
           onClick={() => setAddMoreFields(true)}

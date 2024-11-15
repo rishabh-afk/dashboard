@@ -1,10 +1,10 @@
-import { FaStore } from "react-icons/fa";
+// import { FaStore } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import { VscGraph } from "react-icons/vsc";
 import { FaRegUser } from "react-icons/fa";
 import { SiHelpdesk } from "react-icons/si";
 import { VscPreview } from "react-icons/vsc";
-import { RiHandbagLine } from "react-icons/ri";
+// import { RiHandbagLine } from "react-icons/ri";
 import { RiDashboardLine } from "react-icons/ri";
 import { AiOutlineProduct } from "react-icons/ai";
 import { MdManageAccounts } from "react-icons/md";
@@ -16,7 +16,7 @@ export const tabs = [
     href: "/dashboard",
     icon: RiDashboardLine,
     name: "View Dashboard",
-    crudRoles: ["Read"],
+    crudRoles: ["", "Read", "", ""],
     allowedRoles: ["admin"],
   },
   {
@@ -25,7 +25,7 @@ export const tabs = [
     name: "Statistics",
     title: "Statistics",
     href: "/statistics",
-    crudRoles: ["Read"],
+    crudRoles: ["", "Read", "", ""],
     allowedRoles: ["admin"],
   },
   {
@@ -35,7 +35,7 @@ export const tabs = [
     name: "Manage Users",
     title: "User Management",
     allowedRoles: ["admin"],
-    crudRoles: ["Read", "Create", "Edit", "Delete"],
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
   },
   {
     id: 3,
@@ -43,36 +43,36 @@ export const tabs = [
     title: "Products Management",
     icon: AiOutlineProduct,
     name: "Manage Products",
-    allowedRoles: ["admin", "user"],
-    crudRoles: ["Read", "Create", "Edit", "Delete"],
+    allowedRoles: ["admin", "vendor"],
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
   },
-  {
-    id: 4,
-    href: "/orders",
-    icon: RiHandbagLine,
-    name: "Manage Orders",
-    title: "Order Management",
-    crudRoles: ["Read"],
-    allowedRoles: ["admin"],
-  },
-  {
-    id: 8,
-    href: "/stores",
-    icon: FaStore,
-    name: "Manage Stores",
-    title: "Store Management",
-    crudRoles: ["Read"],
-    allowedRoles: ["admin"],
-  },
-  {
-    id: 5,
-    icon: MdPayment,
-    href: "/payments",
-    title: "Payments Management",
-    name: "Manage Payments",
-    crudRoles: ["Read", "Delete"],
-    allowedRoles: ["admin", "user"],
-  },
+  // {
+  //   id: 4,
+  //   href: "/orders",
+  //   icon: RiHandbagLine,
+  //   name: "Manage Orders",
+  //   title: "Order Management",
+  //   crudRoles: ["", "Read", "", ""],
+  //   allowedRoles: ["admin"],
+  // },
+  // {
+  //   id: 8,
+  //   href: "/stores",
+  //   icon: FaStore,
+  //   name: "Manage Stores",
+  //   title: "Store Management",
+  //   crudRoles: ["", "Read", "", ""],
+  //   allowedRoles: ["admin"],
+  // },
+  // {
+  //   id: 5,
+  //   icon: MdPayment,
+  //   href: "/payments",
+  //   title: "Payments Management",
+  //   name: "Manage Payments",
+  //   crudRoles: ["", "Read", "", "Delete"],
+  //   allowedRoles: ["admin", "user"],
+  // },
   {
     id: 6,
     href: "/reviews",
@@ -80,7 +80,7 @@ export const tabs = [
     name: "Manage Reviews",
     allowedRoles: ["admin"],
     title: "Reviews Management",
-    crudRoles: ["Read", "Create", "Edit", "Delete"],
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
   },
   {
     id: 7,
@@ -89,15 +89,24 @@ export const tabs = [
     name: "Manage Roles",
     allowedRoles: ["admin"],
     title: "Roles Management",
-    crudRoles: ["Read", "Create", "Edit", "Delete"],
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
+  },
+  {
+    id: 10,
+    icon: MdPayment,
+    href: "/coupons",
+    title: "Manage Coupons",
+    name: "Manage Coupons",
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
+    allowedRoles: ["admin", "vendor", "sub-admin"],
   },
   {
     id: 9,
     href: "/help-desk",
     icon: SiHelpdesk,
     name: "Help Desk",
-    allowedRoles: ["admin"],
+    allowedRoles: ["admin", "vendor"],
     title: "Help Desk",
-    crudRoles: ["Read", "Create", "Edit", "Delete"],
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
   },
 ];

@@ -30,13 +30,13 @@ const SingleVideoUploader: FC<SingleVideoUploaderProps> = ({
 
       if (file.size > maxSizeInBytes) {
         return toast.warn(
-          "File size exceeds 5 MB. Please select a smaller file.",
+          "File size exceeds 5 MB. Please select a smaller file."
         );
       }
 
       if (!validTypes.includes(file.type)) {
         return toast.warn(
-          "Invalid file type. Please select an MP4, WEBM, or OGG video.",
+          "Invalid file type. Please select an MP4, WEBM, or OGG video."
         );
       }
 
