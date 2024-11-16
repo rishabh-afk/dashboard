@@ -1,3 +1,4 @@
+import { includes } from "../../utils/polyfills";
 import ResponsiveDateRangePickers from "./MultipleDateSelector";
 
 const Filters = ({
@@ -18,9 +19,17 @@ const Filters = ({
   fetchFilteredData?: any;
 }) => {
   const handleItemsPerPage = async (itemsPerPage: number) => {
-    if (paginate.totalItems < 6) return;
     await fetchFilteredData({ limit: itemsPerPage });
   };
+
+  const getItemsPerPageOptions = () => {
+    const options = [5, 10, 20, 50, 100];
+    return options.filter(
+      (option) => option * paginate.currentPage <= paginate?.totalItems
+    );
+  };
+
+  const itemsPerPageOptions = getItemsPerPageOptions();
 
   return (
     <div className="pr-4 pb-4 grid grid-cols-3 gap-5 justify-between items-end">
@@ -37,16 +46,22 @@ const Filters = ({
         <div>
           <label className="block mb-1">Page:</label>
           <select
-            value={paginate?.itemsPerPage}
+            value={
+              includes(itemsPerPageOptions, paginate?.itemsPerPage)
+                ? paginate?.itemsPerPage
+                : ""
+            }
             onChange={(e) => handleItemsPerPage(Number(e.target.value))}
             className="border border-gray-400 rounded outline-none p-2 w-full"
           >
-            <option value="">--Select--</option>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
+            <option value="" disabled>
+              --Select--
+            </option>
+            {itemsPerPageOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </select>
         </div>
         <div>

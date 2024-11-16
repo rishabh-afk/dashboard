@@ -99,7 +99,7 @@ export default function CustomTable({
   };
 
   return (
-    <div className="overflow-x-auto p-4 pt-0 pb-16">
+    <div className="overflow-x-auto p-4 pt-0 pb-16 animate-fade-up">
       <table className="min-w-full text-left overflow-x-auto border-y-collapse">
         <thead>
           <tr>

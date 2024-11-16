@@ -4,7 +4,7 @@ import { assign } from "../../utils/polyfills";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteModal from "../modals/DeleteModal";
 import { endpoints } from "../../data/endpoints";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Delete, Fetch } from "../../utils/apiUtils";
 const Filters = React.lazy(() => import("./Filters"));
 const Pagination = React.lazy(() => import("./Pagination"));
@@ -43,6 +43,8 @@ const Table = ({
 }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const resetCompleteRef = useRef(false);
+
   const [loading, setloading] = useState(false);
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [paginate, setPaginate] = useState<PaginationRequest>({
@@ -59,6 +61,7 @@ const Table = ({
     key: "",
     direction: null,
   });
+  const [fetching, setFetching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteModalId, setDeleteModalId] = useState("");
   const [selectedField, setSelectedField] = useState("");
@@ -85,19 +88,37 @@ const Table = ({
     fetchFilteredData({ search: searchTerm, selectedField: selectedOption });
   };
 
+  useEffect(() => {
+    if (startDate === null && endDate === null && fetching) {
+      fetchFilteredData({
+        page: 1,
+        limit: 10,
+        end: null,
+        search: "",
+        start: null,
+        sortkey: "",
+        sortdir: "",
+        status: "all",
+        selectedField: "",
+      });
+    }
+    // eslint-disable-next-line
+  }, [startDate, endDate, fetching]);
+
   const handleReset = async () => {
     setEndDate(null);
-    setStartDate(null);
     setSearchTerm("");
-    await fetchFilteredData({
-      page: 1,
-      limit: 10,
-      end: null,
-      start: null,
-      sortkey: "",
-      sortdir: "",
-      status: "all",
-    });
+    setStartDate(null);
+    setSelectedField("");
+    setActiveStatus("all");
+    setSortConfig({ key: "", direction: null });
+
+    resetCompleteRef.current = true;
+
+    if (resetCompleteRef.current) {
+      setFetching(true);
+      resetCompleteRef.current = false;
+    }
   };
 
   const handleEdit = async (id: string) => {
@@ -146,78 +167,95 @@ const Table = ({
   };
 
   const fetchFilteredData = async (filterParams?: any) => {
-    const data = {
-      sortkey: filterParams?.key ?? sort.key,
-      search: filterParams?.search ?? searchTerm,
-      sortdir: filterParams?.dir ?? sort.direction,
-      status: filterParams?.status ?? activeStatus,
-      current: filterParams?.page ?? paginate.currentPage,
-      limit: filterParams?.limit ?? paginate.itemsPerPage,
-      selectedField: filterParams?.selectedField ?? selectedField,
-      end:
-        filterParams?.end || startDate
-          ? dayjs(filterParams?.end ?? endDate).format("YYYY-MM-DD")
-          : null,
-      start:
-        filterParams?.start || endDate
-          ? dayjs(filterParams?.start ?? startDate).format("YYYY-MM-DD")
-          : null,
-    };
+    try {
+      const data = {
+        sortkey: filterParams?.key ?? sort.key, // Sort key
+        status: filterParams?.status ?? activeStatus, // Status
+        search: filterParams?.search ?? searchTerm, // Search term
+        sortdir: filterParams?.dir ?? sort.direction, // Sort direction
+        current: filterParams?.page ?? paginate.currentPage, // Current page
+        limit: filterParams?.limit ?? paginate.itemsPerPage, // Items per page
+        searchkey: filterParams?.selectedField ?? selectedField, // Search field
+        end:
+          filterParams?.end ??
+          (endDate ? dayjs(endDate).format("YYYY-MM-DD") : null), // Handle end date
+        start:
+          filterParams?.start ??
+          (startDate ? dayjs(startDate).format("YYYY-MM-DD") : null), // Handle start date
+      };
 
-    if (data?.sortkey && (data?.sortkey === "asc" || data?.sortkey === "desc"))
-      setSortConfig({
-        value: data?.sortkey,
-        direction: data?.sortdir,
-      });
+      // Update sort configuration if a new sort key is provided
+      if (
+        data?.sortkey &&
+        (data?.sortkey === "asc" || data?.sortkey === "desc")
+      ) {
+        setSortConfig({
+          value: data?.sortkey,
+          direction: data?.sortdir,
+        });
+      }
 
-    if (data?.status) setActiveStatus(data?.status);
+      // Update active status if a new status is provided
+      if (data?.status) setActiveStatus(data?.status);
 
-    if (data.current * data.limit === paginate.totalItems) {
+      // Update pagination state with current page and items per page
       setPaginate({
         ...paginate,
         currentPage: data.current,
         itemsPerPage: data.limit,
       });
-      return;
-    }
 
-    setPaginate({
-      ...paginate,
-      currentPage: data.current,
-      itemsPerPage: data.limit,
-    });
-    let params: any = { page: data.current, limit: data.limit };
+      // Prepare params to be sent with the API request
+      let params: any = { page: data.current, limit: data.limit };
 
-    if (searchTerm && searchTerm.length > 3)
-      assign(params, { search: searchTerm });
-    if (activeStatus !== "all" && data?.status !== "all")
-      assign(params, {
-        status: data?.status ? data.status : activeStatus,
-      });
-
-    if (startDate || data?.start)
-      assign(params, {
-        startDate: dayjs(data?.start ?? startDate).format("YYYY-MM-DD"),
-      });
-    if (endDate || data?.end)
-      assign(params, {
-        endDate: dayjs(data?.end ?? endDate).format("YYYY-MM-DD"),
-      });
-
-    if (sort.key || data?.sortkey)
-      assign(params, {
-        sortkey: data?.sortkey ?? sort.key,
-        sortdir: data?.sortdir ?? sort.direction,
-      });
-
-    setFilteredData(responseData);
-    if (formType) {
-      const fetchUrl = endpoints[formType].fetchAll;
-      const resp: any = await Fetch(fetchUrl, params, 5000, true, false);
-      if (resp?.success) {
-        setFilteredData(resp?.data?.result);
-        setPaginate(resp?.data?.pagination);
+      // Add search parameters if search term and search field are provided
+      if (data.search && data.search.length > 3 && data.searchkey) {
+        assign(params, { search: data.search, searchkey: data?.searchkey });
       }
+
+      // Add status filter if not "all"
+      if (data?.status !== "all") assign(params, { status: data?.status });
+
+      // Add date filters if start or end dates are provided
+      if (data?.start)
+        assign(params, { startDate: dayjs(data?.start).format("YYYY-MM-DD") });
+
+      if (data?.end)
+        assign(params, { endDate: dayjs(data?.end).format("YYYY-MM-DD") });
+
+      // Add sorting parameters if sort key is provided
+      if (data?.sortkey)
+        assign(params, { sortkey: data?.sortkey, sortdir: data?.sortdir });
+
+      // Clear existing filtered data to prepare for new data
+      setFilteredData([]);
+
+      if (formType) {
+        const fetchUrl = endpoints[formType].fetchAll;
+        const resp: any = await Fetch(fetchUrl, params, 5000, true, false);
+        if (resp?.success) {
+          setFilteredData(resp?.data?.result);
+          setPaginate(resp?.data?.pagination);
+        } else {
+          setFilteredData([]);
+          setPaginate({
+            totalPages: 0,
+            totalItems: 0,
+            currentPage: 1,
+            itemsPerPage: 10,
+          });
+        }
+      }
+    } catch (error) {
+      setFilteredData([]);
+      setPaginate({
+        totalPages: 0,
+        totalItems: 0,
+        currentPage: 1,
+        itemsPerPage: 10,
+      });
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -230,7 +268,7 @@ const Table = ({
         handleDelete={handleDelete}
         isVisible={deleteConfirmationModal}
       />
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-5 animate-fade-up">
         <SearchFilter
           options={filterOptions}
           onSearch={handleSearch}

@@ -9,15 +9,15 @@ import DeleteModal from "../../components/modals/DeleteModal";
 import HelpDeskAgentModal from "../../components/modals/HelpDeskAgentModal";
 
 const columns = [
-  { key: "name", label: "Agent Name", isSortable: true },
+  { key: "name", label: "Agent Name", isSortable: false },
   { key: "email", label: "Email ID", isSortable: false },
-  { key: "activeTickets", label: "Active Tickets", isSortable: true },
-  { key: "availability", label: "Availability", isSortable: true },
+  { key: "activeTickets", label: "Active Tickets", isSortable: false },
+  { key: "availability", label: "Availability", isSortable: false },
   {
     key: "createdAt",
     label: "Created At",
     isSortable: false,
-    isDate: true,
+    isDate: false,
     dateFormat: "dd/MM/yyyy",
   },
 ];
