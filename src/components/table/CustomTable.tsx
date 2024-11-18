@@ -103,9 +103,9 @@ export default function CustomTable({
       <table className="min-w-full text-left overflow-x-auto border-y-collapse">
         <thead>
           <tr>
-            <th className="border-y border-gray-300 p-3">
+            {/* <th className="border-y border-gray-300 p-3">
               <input type="checkbox" className="w-4 h-4" />
-            </th>
+            </th> */}
             {/* Dynamically render columns */}
             {columns.map((column) => (
               <th
@@ -144,25 +144,66 @@ export default function CustomTable({
                 key={index}
                 className="transition-all w-40 text-sm hover:bg-gray-100"
               >
-                <td className="border-y border-gray-300 p-3">
+                {/* <td className="border-y border-gray-300 p-3">
                   <input type="checkbox" className="w-4 h-4" />
-                </td>
+                </td> */}
                 {/* Dynamically render data cells based on the columns */}
                 {columns.map((column) => (
                   <td
                     key={column.key}
                     className="border-y border-gray-300 p-3 whitespace-nowrap"
                   >
-                    {column.isDate && row[column.key]
-                      ? format(
-                          new Date(row[column.key]),
+                    {(() => {
+                      const value = row[column.key];
+                      if (column.key === "coverImage" && value) {
+                        return (
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={value}
+                              alt="Cover"
+                              className="h-12 w-12 rounded object-cover"
+                            />
+                            <div>
+                              <div className="font-medium text-gray-700">
+                                {row["_id"]
+                                  ? "#" + row["_id"].slice(-8).toUpperCase()
+                                  : "-"}
+                              </div>
+                              <div className="text-sm text-gray-500 pr-10">
+                                {row["name"].length > 25
+                                  ? row["name"].slice(0, 25) + "..."
+                                  : row["name"] ?? "-"}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      if (column.isDate && value)
+                        return format(
+                          new Date(value),
                           column.dateFormat || "dd/MM/yyyy"
-                        )
-                      : (row[column.key] === true || row[column.key] === false
-                          ? row[column.key].toString()
-                          : row[column.key] && row[column.key].length > 50
-                          ? row[column.key].slice(0, 50) + "..."
-                          : row[column.key]) ?? "-"}
+                        );
+
+                      if ([true, false, 0, 1].includes(value))
+                        return value.toString();
+                      if (column.key === "_id" && typeof value === "string")
+                        return "#" + value.slice(-8).toUpperCase();
+
+                      if (
+                        [
+                          "description",
+                          "metaTitle",
+                          "content",
+                          "title",
+                        ].includes(column.key) &&
+                        typeof value === "string"
+                      )
+                        return value.length > 50
+                          ? value.slice(0, 50) + "..."
+                          : value;
+
+                      return value ?? "-";
+                    })()}
                   </td>
                 ))}
                 <td className="border-y relative border-gray-300 p-3 text-left">

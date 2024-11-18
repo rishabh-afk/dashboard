@@ -11,17 +11,18 @@ import SkeletonLoader from "../components/common/SkeletonLoader";
 const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
+  { key: "_id", label: "ID", isSortable: false },
   { key: "code", label: "Code", isSortable: true },
-  { key: "type", label: "Type" },
+  { key: "type", label: "Type", isSortable: true },
   { key: "value", label: "Value", isSortable: true },
-  { key: "usageLimit", label: "Total Count" },
-  { key: "minimumSpend", label: "Min. Amt." },
-  { key: "maximumSpend", label: "Max. Amt." },
+  { key: "usageLimit", label: "Limit", isSortable: true },
+  { key: "minimumSpend", label: "Min.", isSortable: true },
+  { key: "maximumSpend", label: "Max.", isSortable: true },
   {
+    isDate: true,
+    isSortable: true,
     key: "expiryDate",
     label: "Expired At",
-    isSortable: true,
-    isDate: true,
     dateFormat: "dd/MM/yyyy",
   },
 ];
@@ -49,7 +50,7 @@ const ManageCoupons = () => {
   return (
     <div className="pt-[92px]">
       <div className="flex justify-between items-center mx-4 mb-2">
-        <p className="font-semibold text-3xl">Tickets</p>
+        <p className="font-semibold text-3xl">Coupons</p>
         {isButtonAllowedToShow("Create", "Manage Coupons", allowedTabs) && (
           <Button
             text="+ Create Coupon"

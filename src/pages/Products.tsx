@@ -11,16 +11,16 @@ import SkeletonLoader from "../components/common/SkeletonLoader";
 const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
-  { key: "name", label: "Product Name", isSortable: true },
-  { key: "brandName", label: "Brand Name", isSortable: true },
+  { key: "coverImage", label: "Product", isSortable: false },
+  { key: "brandName", label: "Brand", isSortable: true },
   { key: "soldCount", label: "Sold", isSortable: true },
-  { key: "returnDays", label: "Return (days)", isSortable: true },
+  { key: "returnDays", label: "Return", isSortable: true },
   { key: "isPublished", label: "Is Active", isSortable: true },
   {
+    isDate: true,
+    isSortable: true,
     key: "createdAt",
     label: "Created At",
-    isSortable: true,
-    isDate: true,
     dateFormat: "dd/MM/yyyy",
   },
 ];

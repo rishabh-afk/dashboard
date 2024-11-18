@@ -11,6 +11,7 @@ import { isButtonAllowedToShow } from "../data/generalFunctions";
 const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
+  { key: "_id", label: "ID", isSortable: false },
   { key: "fullName", label: "User Name" },
   { key: "productName", label: "Product Name", isSortable: true },
   { key: "rating", label: "Ratings", isSortable: true },

@@ -2,7 +2,9 @@
 import { MdPayment } from "react-icons/md";
 import { VscGraph } from "react-icons/vsc";
 import { FaRegUser } from "react-icons/fa";
+import { RiSeoFill } from "react-icons/ri";
 import { SiHelpdesk } from "react-icons/si";
+import { FaBloggerB } from "react-icons/fa6";
 import { VscPreview } from "react-icons/vsc";
 // import { RiHandbagLine } from "react-icons/ri";
 import { RiDashboardLine } from "react-icons/ri";
@@ -107,6 +109,24 @@ export const tabs = [
     name: "Help Desk",
     allowedRoles: ["admin", "vendor"],
     title: "Help Desk",
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
+  },
+  {
+    id: 11,
+    href: "/seo",
+    icon: RiSeoFill,
+    name: "SEO (Meta Data)",
+    allowedRoles: ["admin", "vendor"],
+    title: "Search Engine Optimization",
+    crudRoles: ["Create", "Read", "Edit", "Delete"],
+  },
+  {
+    id: 12,
+    href: "/blogs",
+    icon: FaBloggerB,
+    name: "Manage Blogs",
+    title: "Manage Blogs",
+    allowedRoles: ["admin", "vendor"],
     crudRoles: ["Create", "Read", "Edit", "Delete"],
   },
 ];

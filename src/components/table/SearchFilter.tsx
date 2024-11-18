@@ -25,7 +25,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
 
   return (
     <div className="flex flex-col">
-      <p className="p-4 pb-1 inline-flex gap-1 items-center">
+      <p className="px-4 py-1 inline-flex font-semibold gap-1 items-center">
         <CiFilter size={25} /> Filters
       </p>
       <div className="w-full p-4 pt-1 flex items-center">

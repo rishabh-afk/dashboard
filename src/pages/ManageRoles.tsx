@@ -11,10 +11,11 @@ import SkeletonLoader from "../components/common/SkeletonLoader";
 const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
+  { key: "_id", label: "ID", isSortable: false },
   { key: "firstName", label: "First Name", isSortable: true },
   { key: "lastName", label: "Last Name", isSortable: true },
   { key: "mobile", label: "Phone", isSortable: true },
-  { key: "email", label: "Email", isSortable: false },
+  { key: "email", label: "Email", isSortable: true },
   { key: "role", label: "Role", isSortable: true },
   {
     key: "createdAt",

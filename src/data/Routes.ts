@@ -10,8 +10,10 @@ const Orders = React.lazy(() => import("../pages/Orders"));
 const Reviews = React.lazy(() => import("../pages/Reviews"));
 const Products = React.lazy(() => import("../pages/Products"));
 const Payments = React.lazy(() => import("../pages/Payments"));
+const ManageSEO = React.lazy(() => import("../pages/ManageSEO"));
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const Statistics = React.lazy(() => import("../pages/Statistics"));
+const ManageBlogs = React.lazy(() => import("../pages/ManageBlogs"));
 const ManageRoles = React.lazy(() => import("../pages/ManageRoles"));
 const ManageStores = React.lazy(() => import("../pages/ManageStores"));
 const ManageCoupons = React.lazy(() => import("../pages/ManageCoupons"));
@@ -32,7 +34,12 @@ const ManageAgents = React.lazy(() => import("../pages/category/ManageAgents"));
 const ManageCouponForm = React.lazy(
   () => import("../pages/coupon/ManageCouponForm")
 );
-
+const ManageSeoForm = React.lazy(
+  () => import("../pages/createEditPage/ManageSeoForm")
+);
+const ManageBlogForm = React.lazy(
+  () => import("../pages/createEditPage/ManageBlogForm")
+);
 export const routes = [
   {
     path: "/dashboard",
@@ -88,6 +95,16 @@ export const routes = [
     path: "/coupons",
     component: ManageCoupons,
     requiredPermission: "Manage Coupons",
+  },
+  {
+    path: "/seo",
+    component: ManageSEO,
+    requiredPermission: "SEO (Meta Data)",
+  },
+  {
+    path: "/blogs",
+    component: ManageBlogs,
+    requiredPermission: "Manage Blogs",
   },
 ];
 
@@ -193,5 +210,29 @@ export const crudBasedRoutes = [
     component: ManageCouponForm,
     path: "/coupons/edit-coupon/:couponId",
     requiredPermission: "Manage Coupons",
+  },
+  {
+    type: "Edit",
+    component: ManageSeoForm,
+    path: "/seo/edit-seo/:seoId",
+    requiredPermission: "SEO (Meta Data)",
+  },
+  {
+    type: "Create",
+    component: ManageSeoForm,
+    path: "/seo/create-seo",
+    requiredPermission: "SEO (Meta Data)",
+  },
+  {
+    type: "Edit",
+    component: ManageBlogForm,
+    path: "/blogs/edit-blog/:blogId",
+    requiredPermission: "Manage Blogs",
+  },
+  {
+    type: "Create",
+    component: ManageBlogForm,
+    path: "/blogs/create-blog",
+    requiredPermission: "Manage Blogs",
   },
 ];

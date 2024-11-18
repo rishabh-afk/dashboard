@@ -32,9 +32,8 @@ const Filters = ({
   const itemsPerPageOptions = getItemsPerPageOptions();
 
   return (
-    <div className="pr-4 pb-4 grid grid-cols-3 gap-5 justify-between items-end">
-      <div className=" relative col-span-2">
-        <p className="absolute -top-7 lwft-0">Select Date Range:</p>
+    <div className="pr-4 pb-4 grid grid-cols-5 gap-3 justify-between items-end">
+      <div className=" relative col-span-3">
         <ResponsiveDateRangePickers
           endDate={endDate}
           startDate={startDate}
@@ -42,9 +41,8 @@ const Filters = ({
           setStartDate={setStartDate}
         />
       </div>
-      <div className="mb-4 col-span-1 grid grid-cols-2 gap-2 items-center">
+      <div className="col-span-2 grid grid-cols-2 gap-3 items-center">
         <div>
-          <label className="block mb-1">Page:</label>
           <select
             value={
               includes(itemsPerPageOptions, paginate?.itemsPerPage)
@@ -52,10 +50,10 @@ const Filters = ({
                 : ""
             }
             onChange={(e) => handleItemsPerPage(Number(e.target.value))}
-            className="border border-gray-400 rounded outline-none p-2 w-full"
+            className="border border-gray-400 rounded-lg outline-none p-[7px] w-full"
           >
             <option value="" disabled>
-              --Select--
+              Select
             </option>
             {itemsPerPageOptions.map((option) => (
               <option key={option} value={option}>
@@ -65,10 +63,9 @@ const Filters = ({
           </select>
         </div>
         <div>
-          <label className="block mb-1">Filters:</label>
           <button
             onClick={handleReset}
-            className="border border-gray-400 hover:bg-primary/80 hover:text-white rounded p-2 w-full"
+            className="border border-gray-400 hover:bg-primary/80 hover:text-white rounded-lg text-lg p-[4px] w-full"
           >
             Clear
           </button>

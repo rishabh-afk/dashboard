@@ -12,34 +12,25 @@ const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
   { key: "_id", label: "ID", isSortable: false },
-  { key: "firstName", label: "First Name", isSortable: true },
-  { key: "lastName", label: "Last Name", isSortable: true },
-  { key: "mobile", label: "Phone", isSortable: true },
-  { key: "email", label: "Email", isSortable: false },
-  { key: "role", label: "Role", isSortable: true },
-  {
-    key: "createdAt",
-    label: "Created At",
-    isSortable: true,
-    isDate: true,
-    dateFormat: "dd/MM/yyyy",
-  },
+  { key: "url", label: "URL", isSortable: true },
+  { key: "metaTitle", label: "Title", isSortable: true },
+  { key: "canonicalUrl", label: "Canonical URL", isSortable: true },
 ];
 
 const filterOptions = [
-  { label: "Email", value: "email" },
-  { label: "Phone", value: "mobile" },
-  { label: "Name", value: "firstName" },
+  { label: "code", value: "CODE" },
+  { label: "type", value: "Type" },
+  { label: "value", value: "Value" },
 ];
 
-const Users = () => {
-  const formType = "Users";
+const ManageSEO = () => {
+  const formType = "SEO";
   const navigate = useNavigate();
   const allowedTabs = useSelector(
     (state: RootState) => state.auth.user.allowedTabs
   );
   const { data, loading, error, isCached } = useFetch(
-    `${endpoints[formType].fetchAll}?role=vendor`
+    endpoints[formType].fetchAll
   );
   const updatedData = data?.data.result;
   const paginationData = data?.data?.pagination;
@@ -49,12 +40,12 @@ const Users = () => {
   return (
     <div className="pt-[92px]">
       <div className="flex justify-between items-center mx-4 mb-2">
-        <p className="font-semibold text-3xl">Manage Users</p>
-        {isButtonAllowedToShow("Create", "Manage Users", allowedTabs) && (
+        <p className="font-semibold text-3xl">Search Engine Optimization</p>
+        {isButtonAllowedToShow("Create", "SEO (Meta Data)", allowedTabs) && (
           <Button
-            text="+ Add User"
+            text="+ Add Data"
             classes="bg-primary text-white"
-            onClick={() => navigate("/users/create-user")}
+            onClick={() => navigate("/seo/create-seo")}
           />
         )}
       </div>
@@ -66,12 +57,16 @@ const Users = () => {
         responseData={updatedData}
         filterOptions={filterOptions}
         paginationData={paginationData}
-        SearchPlaceholder="Search By Name , Email , Phone , role etc."
-        isEdit={isButtonAllowedToShow("Edit", "Manage Users", allowedTabs)}
-        isDelete={isButtonAllowedToShow("Delete", "Manage Users", allowedTabs)}
+        SearchPlaceholder="Search By code, type, value etc."
+        isEdit={isButtonAllowedToShow("Edit", "SEO (Meta Data)", allowedTabs)}
+        isDelete={isButtonAllowedToShow(
+          "Delete",
+          "SEO (Meta Data)",
+          allowedTabs
+        )}
       />
     </div>
   );
 };
 
-export default Users;
+export default ManageSEO;

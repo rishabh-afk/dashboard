@@ -12,45 +12,30 @@ const Table = React.lazy(() => import("../components/table/Table"));
 
 const columns = [
   { key: "_id", label: "ID", isSortable: false },
-  { key: "requesterName", label: "Username", isSortable: false },
-  { key: "assigneeName", label: "Assignee to", isSortable: false },
-  { key: "priority", label: "Priority", isSortable: true },
+  { key: "title", label: "Title", isSortable: true },
+  { key: "content", label: "Content", isSortable: true },
   { key: "status", label: "Status", isSortable: true },
   {
-    key: "resolutionDate",
-    label: "Resolve At",
-    isSortable: true,
     isDate: true,
-    dateFormat: "dd/MM/yyyy",
-  },
-  {
-    key: "dueDate",
-    label: "Due Date",
     isSortable: true,
-    isDate: true,
-    dateFormat: "dd/MM/yyyy",
-  },
-  {
     key: "createdAt",
-    label: "Raised At",
-    isSortable: true,
-    isDate: true,
+    label: "Created At",
     dateFormat: "dd/MM/yyyy",
   },
 ];
 
 const filterOptions = [
-  { label: "priority", value: "Priority" },
-  { label: "status", value: "Status" },
+  { label: "code", value: "CODE" },
+  { label: "type", value: "Type" },
+  { label: "value", value: "Value" },
 ];
 
-const ManageHelpdesk = () => {
-  const formType = "HelpDesk";
+const ManageBlogs = () => {
+  const formType = "Blogs";
   const navigate = useNavigate();
   const allowedTabs = useSelector(
     (state: RootState) => state.auth.user.allowedTabs
   );
-  const userRole = useSelector((state: RootState) => state.auth.user.role);
   const { data, loading, error, isCached } = useFetch(
     endpoints[formType].fetchAll
   );
@@ -62,15 +47,14 @@ const ManageHelpdesk = () => {
   return (
     <div className="pt-[92px]">
       <div className="flex justify-between items-center mx-4 mb-2">
-        <p className="font-semibold text-3xl">Tickets</p>
-        {userRole === "admin" &&
-          isButtonAllowedToShow("Create", "Help Desk", allowedTabs) && (
-            <Button
-              text="Manage Agents"
-              classes="bg-primary text-white"
-              onClick={() => navigate("/help-desk/manage-agent")}
-            />
-          )}
+        <p className="font-semibold text-3xl">Blogs</p>
+        {isButtonAllowedToShow("Create", "Manage Blogs", allowedTabs) && (
+          <Button
+            text="+ Add Blog"
+            classes="bg-primary text-white"
+            onClick={() => navigate("/blogs/create-blog")}
+          />
+        )}
       </div>
       <Table
         classes="pt-0"
@@ -80,12 +64,12 @@ const ManageHelpdesk = () => {
         responseData={updatedData}
         filterOptions={filterOptions}
         paginationData={paginationData}
-        SearchPlaceholder="Search By Priority . status etc."
-        isEdit={isButtonAllowedToShow("Edit", "Help Desk", allowedTabs)}
-        isDelete={isButtonAllowedToShow("Delete", "Help Desk", allowedTabs)}
+        SearchPlaceholder="Search By code, type, value etc."
+        isEdit={isButtonAllowedToShow("Edit", "Manage Blogs", allowedTabs)}
+        isDelete={isButtonAllowedToShow("Delete", "Manage Blogs", allowedTabs)}
       />
     </div>
   );
 };
 
-export default ManageHelpdesk;
+export default ManageBlogs;
